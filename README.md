@@ -4,11 +4,11 @@
 The Botdr4g0n is a focused tool for DDOS attack on SSH BOT management and installation tools for distributed attacks.
 
 .-----------------------------------------------------------------.
-   |Comamnd                         | description                     |
-   +--------------------------------+---------------------------------+
-   |use status                       List all BOT added in database;  |
-   |use menu                         Show Menu Incial :D;             |
-   |use create [host] [user] [pass]  Create or add a new BOT;         |
+|Comamnd                         | description                     |
++--------------------------------+---------------------------------+
+|use status                       List all BOT added in database;  |
+|use menu                         Show Menu Incial :D;             |
+|use create [host] [user] [pass]  Create or add a new BOT;         |
    |use add_Attack                   Add the bot to attack;           |
    |use set-commad [command]         Run the command ALL BOT;         |
    |use delete_all                   Delete all BOT of Database;      |
@@ -21,8 +21,6 @@ The Botdr4g0n is a focused tool for DDOS attack on SSH BOT management and instal
    |use attack_g3m   [target][port]  Attack G3m website Turbo;        |
    |use clear_install                Delete all tool installed in BOT;|
    +------------------------------------------------------------------+ 
-
-
 
 use status                       List all BOT added in database;  
 use menu                         Show Menu Incial :D;             
