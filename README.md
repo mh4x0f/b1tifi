@@ -2,7 +2,7 @@
 <h2>BOTNET SSH Manager</h2> 
 
 The Botdr4g0n is a focused tool for DDOS attack on SSH BOT management and installation tools for distributed attacks.
-still has appeal as a tool to add AES to encrypt attack and leave the data protected by a key
+still has appeal as a tool to add AES to encrypt attack and leave the data protected by a key. Use key [tab] for complete command in tool.
 
 <img src="https://dl.dropboxusercontent.com/u/97321327/botdr4g0n/bot1.png"> 
 
@@ -39,9 +39,7 @@ The command data encryption  with algorithm AES using a key, thereby protecting 
 Used for delete BOT of database.
 
 <strong>use delete_all<strong>                   Delete all BOT of Database;
-
 <strong>use delete [id]<strong>                  Clear ID for the database;
-
 <strong>use clear_install<strong>                Delete all tool installed in BOT;
 
 <h2>License</h2>
