@@ -43,9 +43,11 @@ The command data encryption  with algorithm AES using a key, thereby protecting 
 
 Used for delete BOT of database.
 
-<strong>use delete_all<strong>                   Delete all BOT of Database;
-<strong>use delete [id]<strong>                  Clear ID for the database;
-<strong>use clear_install<strong>                Delete all tool installed in BOT;
+<strong>use delete_all<strong> Delete all BOT of Database;
+
+<strong>use delete [id]<strong> Clear ID for the database;
+
+<strong>use clear_install<strong> Delete all tool installed in BOT;
 
 <h2>License</h2>
 
