@@ -9,7 +9,7 @@ still has appeal as a tool to add AES to encrypt attack and leave the data prote
 <h3>Documentation</h3>
 <strong>Command main</strong>
 
-The main controls are fundamental to the operation of it, used "use create plus + host + user + password" to the database adds a new bot, then you can use "add_attack" which enables all bot to receive commands.
+The main controls are fundamental to the operation of it, used "use create  + [host] + [user] + [password]" to the database adds a new bot, then you can use "add_attack" which enables all bot to receive commands.
 
 <strong>use status</strong>  Used for List all BOT added in database;  
 <strong>use create [host] [user] [pass]</strong>  Create or add a new BOT;         
