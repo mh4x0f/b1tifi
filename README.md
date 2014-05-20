@@ -7,7 +7,8 @@ still has appeal as a tool to add AES to encrypt attack and leave the data prote
 <img src="https://dl.dropboxusercontent.com/u/97321327/botdr4g0n/bot1.png"> 
 
 <h3>Documentation</h3>
-<strong>Command main</strong>
+------------------------------------------
+<h4><strong>Command main</strong></h4>
 
 The main controls are fundamental to the operation of it, used "use create  + [host] + [user] + [password]" to the database adds a new bot, then you can use "add_attack" which enables all bot to receive commands.
 
@@ -15,9 +16,9 @@ The main controls are fundamental to the operation of it, used "use create  + [h
 <strong>use create [host] [user] [pass]</strong>  Create or add a new BOT;         
 <strong>use add_Attack</strong>                   Add the bot to attack;           
 <strong>use set-commad [command]</strong>         Run the command ALL BOT;
+------------------------------------------
 
-
-<strong>Command of Attack</strong>
+<h4><strong>Command of Attack</strong></h4>
 
 The attack commands are two tools used to "G3M" and "floodSYN.py", this does not prevent the attacker can install other command-line tool to use as pivor attack.
 
@@ -25,16 +26,17 @@ The attack commands are two tools used to "G3M" and "floodSYN.py", this does not
 <strong>use install_g3m</strong>                  Install G3m for attack;          
 <strong>use attack_start [target][port]</strong>  Attack SYN flood all BOT;        
 <strong>use attack_g3m   [target][port]</strong>  Attack G3m website Turbo; 
+------------------------------------------
 
-
-<strong>Command Encrypt</strong>
+<h4><strong>Command Encrypt</strong></h4>
 
 The command data encryption  with algorithm AES using a key, thereby protecting the entire database of your BOT.
 
 <strong>use encrypt  [key]</strong>               Encrypt the data of the Bank;    
 <strong>use descrypt [key]</strong>               Descryt the data of the Bank; 
+------------------------------------------
 
-<strong>Command Delete database</strong>
+<h4><strong>Command Delete database</strong></h4>
 
 Used for delete BOT of database.
 
