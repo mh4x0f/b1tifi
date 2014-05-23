@@ -66,7 +66,7 @@ def banner():
    |use menu                         Show Menu Incial :D;             |
    |use create [host] [user] [pass]  Create or add a new BOT;         |
    |use add_Attack                   Add the bot to attack;           |
-   |use set-commad [command]         Run the command ALL BOT;         |
+   |use set-command [command]         Run the command ALL BOT;         |
    |use delete_all                   Delete all BOT of Database;      |
    |use delete [id]                  Clear ID for the database;       |
    |use encrypt  [key]               Encrypt the data of the Bank;    |
