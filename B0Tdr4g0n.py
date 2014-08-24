@@ -1,7 +1,7 @@
 #coding: utf-8
 #The MIT License (MIT)
 #Version 1.0
-#Copyright (c) 2014 Mh4-(msfcd3r)
+#Copyright (c) 2014 Mh4-(mh4x0f)
 #by Mharcos Nesster
 #Permission is hereby granted, free of charge, to any person obtaining a copy of
 #this software and associated documentation files (the "Software"), to deal in
