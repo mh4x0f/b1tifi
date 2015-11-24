@@ -4,28 +4,14 @@ BOTNET SSH Manager
 
 ### Description
 The Botdr4g0n is a focused tool for DDOS attack on SSH BOT management and installation tools for distributed attacks.
-still has appeal as a tool to add AES to encrypt attack and leave the data protected by a key. Use key [tab] for complete command in tool.
 
 
+### Installation
+```bash
+git clone https://github.com/mh4x0f/botdr4g0n.git
+cd botdr4g0n
+pip install -r requirements.txt
+```
+### Screenshots
 
-### license
-
-The MIT License (MIT)
-Version 1.1
-Copyright (c) 2014 Marcos Nesster (mh4x0f) 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+![screenshot1](https://dl.dropboxusercontent.com/u/97321327/botdr4g0n/botdragon.png "screenshot1")
