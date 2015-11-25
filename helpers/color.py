@@ -41,6 +41,6 @@ def banner():
  | |_) | (_) | || (_| | |  |__   _| (_| | |_| | | | |
  |_.__/ \___/ \__\__,_|_|     |_|  \__, |\___/|_| |_|
                                    |___/
-    Version: 0.1.2 
+    Version: 0.1.2
     Author: Marcos Nesster (mh4x0f)\n""")
     return ASCII
