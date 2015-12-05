@@ -18,9 +18,10 @@
 import pxssh
 from helpers.color import setcolor
 class ssh(object):
-    def __init__(self, host, user, password,checkconnect=True):
+    def __init__(self, host,port, user, password,checkconnect=True):
         self.host = host
         self.user = user
+        self.port = port
         self.connection = checkconnect
         self.password = password
         self.status = None
@@ -29,7 +30,7 @@ class ssh(object):
     def connect(self):
         try:
             self.s = pxssh.pxssh()
-            self.s.login(self.host, self.user, self.password)
+            self.s.login(self.host, self.user, self.password,port=self.port)
             if self.connection:
                 self.status = '[{}]'.format(setcolor('ON',color='green'))
                 self.on = True
@@ -40,7 +41,13 @@ class ssh(object):
             self.on = False
     def logout(self):
         self.s.terminate(True)
+    def info(self):
+        kernelversion = self.send_command('uname -r')
+        print('PID      :: {}'.format(self.session.pid))
+        print('timeout  :: {}'.format(self.session.timeout))
+        print('Shell    :: {}'.format(self.session.name))
+        print('Kernel   :: {}\n'.format(kernelversion.split()))
     def send_command(self,cmd):
         self.session.sendline(cmd)
         self.session.prompt()
-        return self.session.before
+        return str(self.session.before).replace(cmd,'')

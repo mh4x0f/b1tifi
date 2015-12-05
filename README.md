@@ -15,3 +15,6 @@ pip install -r requirements.txt
 ### Screenshots
 
 ![screenshot1](https://dl.dropboxusercontent.com/u/97321327/botdr4g0n/botdragon.png "screenshot1")
+
+### Demo
+[![demo](https://asciinema.org/a/31240.png)](https://asciinema.org/a/31240)

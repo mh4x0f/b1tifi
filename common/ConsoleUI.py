@@ -66,7 +66,7 @@ class Console(cmd.Cmd):
                     return
                 print color.display_messages('Agents:',info=True,sublime=True)
                 agent = list(self.settings['all'][args.id])
-                agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],checkconnect=True).status)
+                agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
                 self.listbotsprint += list([agent])
                 print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headersCheck)
 
@@ -82,9 +82,9 @@ class Console(cmd.Cmd):
                 print color.display_messages('Agents:',info=True,sublime=True)
                 for agent in self.settings['all'].items():
                     agent = list(agent[1])
-                    agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],checkconnect=True).status)
+                    agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
                     self.listbotsprint += list([agent])
-                print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headers)
+                print tabulate(self.listbotsprint,headers=funcSQL.sqlite.headersCheck)
                 color.linefeed()
         else:
             arg_parser.print_help()
@@ -105,6 +105,7 @@ class Console(cmd.Cmd):
                 print color.display_messages('connecting...',info=True)
                 self.settings['agents'][args.id]['tunel'] = self.sshConnect.ssh(
                 self.settings['agents'][args.id]['creds']['Host'],
+                self.settings['agents'][args.id]['creds']['Port'],
                 self.settings['agents'][args.id]['creds']['User'],
                 self.settings['agents'][args.id]['creds']['Pass'])
                 print color.display_messages('Agent::{} [{}]\n'.format(
@@ -118,6 +119,7 @@ class Console(cmd.Cmd):
             for agent in self.settings['agents'].keys():
                 self.settings['agents'][agent]['tunel'] = self.sshConnect.ssh(
                 self.settings['agents'][agent]['creds']['Host'],
+                self.settings['agents'][args.id]['creds']['Port'],
                 self.settings['agents'][agent]['creds']['User'],
                 self.settings['agents'][agent]['creds']['Pass'])
                 print color.display_messages('Agent::{} [{}]\n'.format(
@@ -151,19 +153,29 @@ class Console(cmd.Cmd):
                         color.linefeed()
                 return
         print color.display_messages('Usage: shell <cmd>',info=True)
-
+    def do_sysinfo(self,args):
+        """ print information session on agents"""
+        if self.settings['limited'] != None:
+            self.stdout.write(str(self.settings['agents'][self.settings['limited']]['tunel'].info()))
+        else:
+            for agent in self.settings['agents'].keys():
+                if self.settings['agents'][int(agent)]['tunel']:
+                    print color.display_messages('HOST::{}'.format(self.settings['agents'][agent]['creds']['Host']),
+                    info=True,sublime=True)
+                    self.stdout.write(str(self.settings['agents'][int(agent)]['tunel'].info()))
+                    color.linefeed()
     def do_check(self,args):
         """ test all agents login ssh  """
         agentsCount = 0
         self.settings['check'] = []
         for agent in self.db.execute(funcSQL.sqlite.selectAllBots):
             agent = list(agent)
-            agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],checkconnect=True).status)
+            agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
             self.settings['check'].append(agent)
         print color.display_messages('Available Bots:',info=True,sublime=True)
         print tabulate(self.settings['check'],headers=funcSQL.sqlite.headersCheck)
         for items in self.settings['check']:
-            if search('ON',items[5]):agentsCount +=1
+            if search('ON',items[6]):agentsCount +=1
         color.linefeed()
         print color.display_messages('Online Agents: {}'.format(color.setcolor(str(agentsCount),color='blue')),info=True)
 
@@ -172,25 +184,27 @@ class Console(cmd.Cmd):
 
     def search_on_agents(self):
         for agent in self.db.execute(funcSQL.sqlite.selectAllBots):
-            if  (self.sshConnect.ssh(agent[1],agent[2],agent[3],checkconnect=True).on):
+            if  (self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).on):
                 self.settings['agents'][agent[0]] = {'creds':{},'tunel':None}
                 self.settings['agents'][agent[0]]['creds']['ID']   = agent[0]
                 self.settings['agents'][agent[0]]['creds']['Host'] = agent[1]
-                self.settings['agents'][agent[0]]['creds']['User'] = agent[2]
-                self.settings['agents'][agent[0]]['creds']['Pass'] = agent[3]
+                self.settings['agents'][agent[0]]['creds']['Port'] = agent[2]
+                self.settings['agents'][agent[0]]['creds']['User'] = agent[3]
+                self.settings['agents'][agent[0]]['creds']['Pass'] = agent[4]
 
     def do_register(self,args):
         """ add bot on database """
         arg_parser = argparse.ArgumentParser(prog='register',description='add bot on database clients')
-        arg_parser.add_argument('-i', '--ipaddress', dest='host',metavar='<Host>', help='ipaddress/host/dns connect ssh')
-        arg_parser.add_argument('-p', '--password', dest='password',metavar='<Password>', help='password ssh client')
+        arg_parser.add_argument('--host', dest='host',metavar='<Host>', help='ipaddress/host/dns connect ssh')
+        arg_parser.add_argument('--pass', dest='password',metavar='<Password>', help='password ssh client')
         arg_parser.add_argument('-u', '--user',dest='user', metavar='<user>', help='delete all bot registered')
+        arg_parser.add_argument('-p', '--port', dest='port',metavar='<Port>',default='22', help='port connect ssh')
         try:
             args=arg_parser.parse_args(shlex.split(args))
         except: return
         if args.host and args.password and args.user:
             print color.display_messages('Insert Data: SQL statement will insert a new row',info=True)
-            funcSQL.DB_insert(self.con,self.db,args.host,args.user,args.password)
+            funcSQL.DB_insert(self.con,self.db,args.host,args.port,args.user,args.password)
             print color.display_messages('credentials ssh added with success',sucess=True)
         else:
             arg_parser.print_help()
@@ -211,7 +225,7 @@ class Console(cmd.Cmd):
             print color.display_messages('Found ID:',sublime=True,info=True)
             print color.display_messages('Search query for finding a particular id',info=True)
             print color.display_messages('Section DELETE FROM statement.',info=True)
-            print color.display_messages('ID:{} (Host:{} User:{} Password:{})'.format(items[0],items[1],items[2],items[3],items[4]),info=True)
+            print color.display_messages('ID:{} Host:{} Port:{} User:{} Password:{})'.format(items[0],items[1],items[2],items[3],items[4]),info=True)
             funcSQL.deleteID(self.con,self.db,args.id)
             if funcSQL.lengthDB(self.db) < 1:
                 self.db.execute(funcSQL.sqlite.zeraids)
