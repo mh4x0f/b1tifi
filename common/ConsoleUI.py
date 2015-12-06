@@ -21,8 +21,7 @@ import shlex
 import sqlite3
 import argparse
 from re import search
-from helpers import color
-from helpers import funcSQL
+from helpers import color,funcSQL
 from tabulate import tabulate
 class Console(cmd.Cmd):
     def __init__(self):
@@ -94,6 +93,7 @@ class Console(cmd.Cmd):
         arg_parser = argparse.ArgumentParser(prog='interact',description='interact with one/all agents')
         arg_parser.add_argument('-i', '--id', dest='id',type=int,metavar='<id>', help='connect with particular agent SSH by id')
         arg_parser.add_argument('-a', '--all',dest='all', action='store_true', help='connect all agent Available')
+        arg_parser.add_argument('-s', '--shell',dest='shell', action='store_true', help='connect Remote shell bin/bash')
         arg_parser.add_argument('-q', '--quit',dest='quit', action='store_true', help='quit all connections with agents')
         try:
             args=arg_parser.parse_args(shlex.split(args))
@@ -108,11 +108,14 @@ class Console(cmd.Cmd):
                 self.settings['agents'][args.id]['creds']['Port'],
                 self.settings['agents'][args.id]['creds']['User'],
                 self.settings['agents'][args.id]['creds']['Pass'])
-                print color.display_messages('Agent::{} [{}]\n'.format(
+                print color.display_messages('Agent::{} [{}]'.format(
                 self.settings['agents'][args.id]['creds']['Host'],
                 color.setcolor('ON',color='green')),info=True)
-                self.settings['limited'] = args.id
-            print color.display_messages('Added bot with success.',sucess=True)
+                if args.shell:
+                    self.interactive_binbash(args.id)
+                else:
+                    self.settings['limited'] = args.id
+                    print color.display_messages('Added bot with success.',sucess=True)
         elif args.all:
             print color.display_messages('Checking Creadentials SHH...',info=True)
             self.search_on_agents()
@@ -134,6 +137,7 @@ class Console(cmd.Cmd):
                     print color.display_messages('HOST::{} broken::[{}]'.format(self.settings['agents'][agent]['creds']['Host'],
                     color.setcolor('OFF',color='red')),info=True)
                     self.settings['agents'][int(agent)]['tunel'].logout()
+            self.search_on_agents()
             print color.display_messages('Connection broken all agents',info=True)
         else:
             arg_parser.print_help()
@@ -164,6 +168,10 @@ class Console(cmd.Cmd):
                     info=True,sublime=True)
                     self.stdout.write(str(self.settings['agents'][int(agent)]['tunel'].info()))
                     color.linefeed()
+
+    def interactive_binbash(self,id):
+        self.stdout.write(str(self.settings['agents'][id]['tunel'].interactive()))
+
     def do_check(self,args):
         """ test all agents login ssh  """
         agentsCount = 0
