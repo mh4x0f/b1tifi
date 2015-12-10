@@ -25,15 +25,15 @@ def linefeed():
     print('\n')
 def display_messages(string,error=False,sucess=False,info=False,sublime=False,without=False):
     if sublime:
-        if   error:return  '\n{}{}[-]{} {}\n===={}\n'.format(colors.RED,colors.BOLD,colors.ENDC,string,len(string)*'=')
-        elif sucess:return '\n{}{}[+]{} {}\n===={}\n'.format(colors.GREEN,colors.BOLD,colors.ENDC,string,len(string)*'=')
-        elif info: return  '\n{}{}[*]{} {}\n===={}\n'.format(colors.BLUE,colors.BOLD,colors.ENDC,string,len(string)*'=')
+        if   error:print  '\n{}{}[-]{} {}\n===={}\n'.format(colors.RED,colors.BOLD,colors.ENDC,string,len(string)*'=')
+        elif sucess:print '\n{}{}[+]{} {}\n===={}\n'.format(colors.GREEN,colors.BOLD,colors.ENDC,string,len(string)*'=')
+        elif info: print  '\n{}{}[*]{} {}\n===={}\n'.format(colors.BLUE,colors.BOLD,colors.ENDC,string,len(string)*'=')
     else:
-        if   error:return  '{}{}[-]{} {}'.format(colors.RED,colors.BOLD,colors.ENDC,string)
-        elif sucess:return '{}{}[+]{} {}'.format(colors.GREEN,colors.BOLD,colors.ENDC,string)
-        elif info: return  '{}{}[*]{} {}'.format(colors.BLUE,colors.BOLD,colors.ENDC,string)
+        if   error:print  '{}{}[-]{} {}'.format(colors.RED,colors.BOLD,colors.ENDC,string)
+        elif sucess:print '{}{}[+]{} {}'.format(colors.GREEN,colors.BOLD,colors.ENDC,string)
+        elif info: print  '{}{}[*]{} {}'.format(colors.BLUE,colors.BOLD,colors.ENDC,string)
 
-def banner():
+def banner(v,a):
     ASCII = ("""
   _           _      _      _  _          ___
  | |__   ___ | |_ __| |_ __| || |   __ _ / _ \ _ __
@@ -41,6 +41,6 @@ def banner():
  | |_) | (_) | || (_| | |  |__   _| (_| | |_| | | | |
  |_.__/ \___/ \__\__,_|_|     |_|  \__, |\___/|_| |_|
                                    |___/
-    Version: 0.1.2
-    Author: Marcos Nesster (mh4x0f)\n""")
+    Version: {}
+    Author:  {}\n""".format(v,a))
     return ASCII

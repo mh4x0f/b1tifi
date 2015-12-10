@@ -16,43 +16,65 @@
 #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import pxssh
+import time
 from helpers.color import setcolor,display_messages
 import signal
+import threading
+from utils import Thread_Jobs
+from datetime import datetime
 class ssh(object):
     def __init__(self, host,port, user, password,checkconnect=True):
-        self.host = host
-        self.user = user
-        self.port = port
-        self.connection = checkconnect
-        self.password = password
-        self.status = None
-        self.on     = False
-        self.session = self.connect()
-    def connect(self):
+        self.settings   = {'Host': host,'User': user,'Port': port,'Password': password}
+        self.jobs       = {'Running': False,'Command': None,'Packets':[]}
+        self.connection,self.password = checkconnect,password
+        self.status,self.session,self.on = None,None,False
+        thread_connect  = threading.Thread(target=self.ThreadSSH,args=[])
+        thread_connect.setDaemon(True)
+        thread_connect.start()
+        thread_connect.join()
+
+    def job_start(self,cmd):
+        self.thread_jobs  = Thread_Jobs(cmd,self.session)
+        self.thread_jobs.setDaemon(True)
+        self.thread_jobs.start()
+        self.jobs['Running'] = True
+        self.jobs['Command'] = cmd
+        display_messages('Started Job::{} from command:: {}'.format(self.settings['Host'],cmd),sucess=True)
+        self.jobs['Packets'] = [self.settings['Host'],self.jobs['Command'],
+        str(datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d %H:%M:%S"))]
+
+    def job_stop(self):
+        self.thread_jobs.stop(self.settings['Host'])
+        self.jobs['Running'] = False
+
+    def ThreadSSH(self):
         try:
-            self.s = pxssh.pxssh()
-            self.s.login(self.host, self.user, self.password,port=self.port)
+            self.session = pxssh.pxssh()
+            self.session.login(self.settings['Host'], self.settings['User'],
+            self.settings['Password'],port=self.settings['Port'])
             if self.connection:
                 self.status = '[{}]'.format(setcolor('ON',color='green'))
                 self.on = True
-            return self.s
         except Exception, e:
-            Hostfaled = str(self.host)
             self.status = '[{}]'.format(setcolor('OFF',color='red'))
             self.on = False
+
     def logout(self):
-        self.s.terminate(True)
+        self.session.terminate(True)
+
     def info(self):
-        kernelversion = self.send_command('uname -r')
         print display_messages('System Informations:',sublime=True,info=True)
+        print('Host     :: {}'.format(self.settings['Host']))
         print('PID      :: {}'.format(self.session.pid))
         print('timeout  :: {}'.format(self.session.timeout))
         print('Shell    :: {}'.format(self.session.name))
+        kernelversion = self.send_command('uname -r')
         print('Kernel   :: {}\n'.format(kernelversion.split()))
+
     def interactive(self):
         signal.signal(signal.SIGINT, self.signal_handler)
-        print display_messages('Remote Shell:>',sublime=True,info=True)
-        self.session.PROMPT_SET_SH = "PS1='{}@{}\$ '".format(self.host,self.user)
+        print display_messages('Remote Shell:',sublime=True,info=True)
+        self.session.PROMPT_SET_SH = "PS1='{}@{}\$ '".format(self.settings['Host'],self.settings['User'])
         self.session.auto_prompt_reset = False
         self.session.set_unique_prompt()
         self.session.interact()
