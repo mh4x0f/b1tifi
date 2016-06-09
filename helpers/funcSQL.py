@@ -8,6 +8,7 @@ class sqlite:
     selectAllBots  = 'SELECT id,ipadress,port,user,password,datestamp FROM database_bot'
     deleteforID     = 'DELETE FROM database_bot WHERE id= {}'
     zeraids         = 'UPDATE SQLITE_SEQUENCE set seq=0 WHERE name="database_bot"'
+    delete_all       = 'DROP TABLE IF EXISTS database_bot'
 def DB_insert(con,db,ipadress,port,user,password):
     data_time = str(datetime.fromtimestamp(int(time.time())).strftime("%Y-%m-%d %H:%M:%S"))
     db.execute('INSERT INTO database_bot (ipadress,port,user,datestamp,password) VALUES(?,?,?,?,?)',(ipadress,port,user,data_time,password))

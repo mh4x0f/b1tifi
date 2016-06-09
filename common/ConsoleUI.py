@@ -21,6 +21,7 @@ import sqlite3
 import argparse
 import secureUI
 from re import search
+from os import system
 from helpers import color,funcSQL
 from tabulate import tabulate
 class Console(cmd.Cmd):
@@ -274,9 +275,8 @@ class Console(cmd.Cmd):
                 self.db.execute(funcSQL.sqlite.zeraids)
                 self.con.commit()
         elif args.all:
-            for i in range(funcSQL.lengthDB(self.db)):
-                funcSQL.deleteID(self.con,self.db,i)
-            self.db.execute(funcSQL.sqlite.zeraids)
+            self.db.execute(funcSQL.sqlite.delete_all)
+            self.db.execute(funcSQL.sqlite.createTables)
             self.con.commit()
         else:
             arg_parser.print_help()
@@ -307,6 +307,9 @@ class Console(cmd.Cmd):
             self.stdout.write('    {:<10}	{}\n'.format(command, doc))
         print('\n')
 
+    def do_clear(self,args):
+        """ clean up the line """
+        system('clear')
     def default(self, args):pass
     def emptyline(self):pass
     def do_exit(self, args):
