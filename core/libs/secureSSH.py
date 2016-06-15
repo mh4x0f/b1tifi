@@ -15,13 +15,13 @@
 #COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from pexpect import pxssh
-import time
-from helpers.color import setcolor,display_messages
 import signal
 import threading
-from utils import Thread_Jobs
+import time
 from datetime import datetime
+from pexpect import pxssh
+from core.utils.threads import Thread_Jobs
+from core.utils.color import setcolor,display_messages
 class ssh(object):
     def __init__(self, host,port, user, password,checkconnect=True):
         self.settings   = {'Host': host,'User': user,'Port': port,'Password': password}
