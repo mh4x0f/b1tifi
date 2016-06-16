@@ -1,0 +1,12 @@
+language: python
+python:
+ - "2.7"
+sudo: required
+before_install:
+ - sudo apt-get update -qq
+
+sudo: required
+install:
+ - sudo pip install -r requirements.txt
+
+script: exit 0
