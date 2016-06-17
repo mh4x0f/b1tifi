@@ -6,7 +6,7 @@ version = '0.1.3.1'
 author  = 'Marcos Nesster (@mh4x0f)'
 def main():
     folderDB = path.expanduser('~/.botdr4g0n-db')
-    db_path = path.join(folderDB, 'cme.db')
+    db_path = path.join(folderDB, 'botdr4g0n.db')
     if not path.exists(folderDB):
         mkdir(folderDB)
     shell = Console(db_path)
