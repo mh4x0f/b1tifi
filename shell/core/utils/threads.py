@@ -1,5 +1,5 @@
 import threading
-from core.utils.color import display_messages
+from shell.core.utils.color import display_messages
 class Thread_Jobs(threading.Thread):
     def __init__(self,cmd,session):
         threading.Thread.__init__(self)

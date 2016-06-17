@@ -1,6 +1,5 @@
 #The MIT License (MIT)
-#Version 1.1
-#Copyright (c) 2014 Marcos Nesster (mh4x0f)
+#Copyright (c) 2014-2016 Marcos Nesster (mh4x0f)
 #Permission is hereby granted, free of charge, to any person obtaining a copy of
 #this software and associated documentation files (the "Software"), to deal in
 #the Software without restriction, including without limitation the rights to
@@ -20,8 +19,8 @@ import threading
 import time
 from datetime import datetime
 from pexpect import pxssh
-from core.utils.threads import Thread_Jobs
-from core.utils.color import setcolor,display_messages
+from shell.core.utils.threads import Thread_Jobs
+from shell.core.utils.color import setcolor,display_messages
 class ssh(object):
     def __init__(self, host,port, user, password,checkconnect=True):
         self.settings   = {'Host': host,'User': user,'Port': port,'Password': password}

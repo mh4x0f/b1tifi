@@ -1,6 +1,5 @@
 #The MIT License (MIT)
-#Version 1.1
-#Copyright (c) 2014 Marcos Nesster (mh4x0f)
+#Copyright (c) 2014-2016 Marcos Nesster (mh4x0f)
 #Permission is hereby granted, free of charge, to any person obtaining a copy of
 #this software and associated documentation files (the "Software"), to deal in
 #the Software without restriction, including without limitation the rights to
@@ -23,13 +22,13 @@ from os import system
 from subprocess import check_output
 from re import search
 from tabulate import tabulate
-import core.libs.secureSSH as SSHConnection
-from core.utils import color,funcSQL
+import shell.core.libs.secureSSH as SSHConnection
+from shell.core.utils import color,funcSQL
 class Console(cmd.Cmd):
-    def __init__(self):
+    def __init__(self,db_path):
         cmd.Cmd.__init__(self)
         self.prompt = color.setcolor(':: ', color='Blue')
-        self.con    = sqlite3.connect('data/botdr4g0n.db')
+        self.con    = sqlite3.connect(db_path)
         self.db     = self.con.cursor()
         self.db.execute(funcSQL.sqlite.createTables)
         self.settings   = {'all' :{},'check' :[],'agents':{}}
