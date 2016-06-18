@@ -18,7 +18,7 @@ import argparse
 import cmd
 import shlex
 import sqlite3
-from os import system
+from os import system,path,getcwd
 from subprocess import check_output
 from re import search
 from tabulate import tabulate
@@ -243,6 +243,7 @@ class Console(cmd.Cmd):
         arg_parser.add_argument('--pass', dest='password',metavar='<Password>', help='password ssh client')
         arg_parser.add_argument('-u', '--user',dest='user', metavar='<user>', help='delete all bot registered')
         arg_parser.add_argument('-p', '--port', dest='port',metavar='<Port>',default='22', help='port connect ssh')
+        arg_parser.add_argument('-f', '--file', dest='file',metavar='<filepath>', help='imports clients from a file')
         try:
             args=arg_parser.parse_args(shlex.split(args))
         except: return
@@ -250,6 +251,40 @@ class Console(cmd.Cmd):
             color.display_messages('Insert Data: SQL statement will insert a new row', info=True)
             funcSQL.DB_insert(self.con, self.db, args.host, args.port, args.user, args.password)
             color.display_messages('credentials ssh added with success', sucess=True)
+        elif args.file:
+            self.all_bot_checked = []
+            color.display_messages('searching for: {} ...'.format(path.realpath(args.file)),info=True)
+            if path.exists(args.file):
+                self.lines_all_read = [line.rstrip('\n') for line in open(path.realpath(args.file),'r')]
+                for items in self.lines_all_read:
+                    if len(items.split()) == 4:
+                        self.all_bot_checked.append(items)
+                if len(self.all_bot_checked) == 0:
+                    color.display_messages('Instruction for -f argumments:',info=True,sublime=True)
+                    print('You need to use the separator character [space] in this format below\n')
+                    print('-----cut here -------\n')
+                    print('root:~# cat example.txt\n')
+                    print('192.168.0.100 22 DemoBOT P@ssW0rd')
+                    print('192.168.0.120 22 Userdr4g0n botP@ssW0rd')
+                    print('\n-----cut here -------\n')
+                    print('')
+                    return None
+                color.display_messages('All agents imported from file:', info=True,sublime=True)
+                for agent in self.all_bot_checked:
+                    color.display_messages('{} {} {} {}'.format(agent.split()[0],
+                        agent.split()[1],agent.split()[2],agent.split()[3]), info=True)
+                color.linefeed()
+                color.display_messages('Do you want to import?S/N', info=True)
+                choise = raw_input()
+                if choise.lower() == 's':
+                    color.display_messages('Importing agents...',info=True)
+                    for agent  in self.all_bot_checked:
+                        funcSQL.DB_insert(self.con, self.db,
+                            agent.split()[0],agent.split()[1],agent.split()[2],agent.split()[3])
+                    return color.display_messages('all agents ssh added with success', sucess=True)
+                color.display_messages('import was canceled', info=True)
+            else:
+                color.display_messages('file: could not be found', error=True)
         else:
             arg_parser.print_help()
 

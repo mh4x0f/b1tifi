@@ -1,0 +1,3 @@
+192.168.0.100 22 Dem0Bot Password
+192.168.0.101 22 UserN4m3 P@ssWord
+192.168.0.101 22 dr4g0nBO P@ssWord

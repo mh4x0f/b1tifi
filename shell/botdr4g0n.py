@@ -2,7 +2,7 @@
 from os import path,mkdir
 from shell.core.consoleUI import Console
 from shell.core.utils.color import banner
-version = '0.1.3.1'
+version = '1.3.2'
 author  = 'Marcos Nesster (@mh4x0f)'
 def main():
     folderDB = path.expanduser('~/.botdr4g0n-db')
