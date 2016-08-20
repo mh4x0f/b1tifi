@@ -269,20 +269,19 @@ class Console(cmd.Cmd):
                     print('\n-----cut here -------\n')
                     print('')
                     return None
+                self.ListBot = []
                 color.display_messages('All agents imported from file:', info=True,sublime=True)
-                for agent in self.all_bot_checked:
-                    color.display_messages('{} {} {} {}'.format(agent.split()[0],
-                        agent.split()[1],agent.split()[2],agent.split()[3]), info=True)
+                for agent in self.all_bot_checked: self.ListBot += list([agent.split()])
+                print tabulate(self.ListBot, headers=funcSQL.sqlite.headersimport)
                 color.linefeed()
-                color.display_messages('Do you want to import?S/N', info=True)
-                choise = raw_input()
+                choise = raw_input('{}[*]{} Do you want to import?(S/N):'.format(color.colors.GREEN,color.colors.ENDC,))
                 if choise.lower() == 's':
                     color.display_messages('Importing agents...',info=True)
                     for agent  in self.all_bot_checked:
                         funcSQL.DB_insert(self.con, self.db,
                             agent.split()[0],agent.split()[1],agent.split()[2],agent.split()[3])
                     return color.display_messages('all agents ssh added with success', sucess=True)
-                color.display_messages('import was canceled', info=True)
+                color.display_messages('import was been canceled.', error=True)
             else:
                 color.display_messages('file: could not be found', error=True)
         else:

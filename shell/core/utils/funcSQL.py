@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 class sqlite:
     headers        = ('Id','Host','Port','User','Password','Data')
+    headersimport  = ('Host','Port','User','Password','Data')
     headersCheck   = ('Id','Host','Port','User','Password','Data','Status')
     headersJobs    = ('Id','Host','Running','Start Data')
     createTables   = 'CREATE TABLE IF NOT EXISTS database_bot (id integer PRIMARY KEY AUTOINCREMENT, ipadress text,port text, user text,datestamp text, password text)'

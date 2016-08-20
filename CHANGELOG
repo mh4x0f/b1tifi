@@ -1,6 +1,7 @@
 Version 1.3.2
 =============
 - added support imports clients from a file
+- added tabulate in imports clients
 
 Version 1.3.1
 =============
