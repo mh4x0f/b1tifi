@@ -17,10 +17,12 @@
 import signal
 import threading
 import time
+from socket import gethostbyname
 from datetime import datetime
 from pexpect import pxssh
 from shell.core.utils.threads import Thread_Jobs
 from shell.core.utils.color import setcolor,display_messages
+
 class ssh(object):
     def __init__(self, host,port, user, password,checkconnect=True):
         self.settings   = {'Host': host,'User': user,'Port': port,'Password': password}
@@ -49,7 +51,7 @@ class ssh(object):
     def ThreadSSH(self):
         try:
             self.session = pxssh.pxssh()
-            self.session.login(self.settings['Host'], self.settings['User'],
+            self.session.login(gethostbyname(self.settings['Host']), self.settings['User'],
             self.settings['Password'],port=self.settings['Port'])
             if self.connection:
                 self.status = '[{}]'.format(setcolor('ON',color='green'))
@@ -82,6 +84,7 @@ class ssh(object):
     def signal_handler(self,signal, frame):
         print('Exit interact shell!')
         self.session.terminate(True)
+
     def send_command(self,cmd):
         self.session.sendline(cmd)
         try:
