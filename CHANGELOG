@@ -2,6 +2,8 @@ Version 1.3.2
 =============
 - added support imports clients from a file
 - added tabulate in imports clients
+- fixed somes improves in command "interact"
+- added command "agents" for list all agents in session
 
 Version 1.3.1
 =============

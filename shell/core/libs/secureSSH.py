@@ -28,7 +28,7 @@ class ssh(object):
         self.settings   = {'Host': host,'User': user,'Port': port,'Password': password}
         self.jobs       = {'Running': False,'Command': None,'Packets':[]}
         self.connection,self.password = checkconnect,password
-        self.status,self.session,self.on = None,None,False
+        self.status,self.session,self.activated = None,None,False
         thread_connect  = threading.Thread(target=self.ThreadSSH,args=[])
         thread_connect.setDaemon(True)
         thread_connect.start()
@@ -47,6 +47,7 @@ class ssh(object):
     def job_stop(self):
         self.thread_jobs.stop(self.settings['Host'])
         self.jobs['Running'] = False
+        self.activated = False
 
     def ThreadSSH(self):
         try:
@@ -55,13 +56,15 @@ class ssh(object):
             self.settings['Password'],port=self.settings['Port'])
             if self.connection:
                 self.status = '[{}]'.format(setcolor('ON',color='green'))
-                self.on = True
+            self.activated = True
         except Exception, e:
             self.status = '[{}]'.format(setcolor('OFF',color='red'))
-            self.on = False
+            self.activated = False
 
     def logout(self):
         self.session.terminate(True)
+        self.session.close()
+        self.activated = False
 
     def info(self):
         print display_messages('System Informations:',sublime=True,info=True)

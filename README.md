@@ -25,7 +25,7 @@ root@local:~# botdr4g0n
  | |_) | (_) | || (_| | |  |__   _| (_| | |_| | | | |
  |_.__/ \___/ \__\__,_|_|     |_|  \__, |\___/|_| |_|
                                    |___/
-    Version: 0.1.3
+    Version: 1.3.2
     Author:  Marcos Nesster (@mh4x0f)
 
 :: help
@@ -35,6 +35,7 @@ root@local:~# botdr4g0n
 
     Commands     Description
     --------     -----------
+    agents       list all agents in interacting 
     check        test all agents login ssh  
     clear        clean up the line 
     del          delete bot using <id>/all 

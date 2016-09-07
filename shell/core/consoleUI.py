@@ -48,23 +48,19 @@ class Console(cmd.Cmd):
         self.listbotsprint = []
         for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
         if self.settings['all'] == {}:
-            color.display_messages('No Agents registered',info=True)
-            return
+            return color.display_messages('No Agents registered',info=True)
         if args.database:
             if args.id and not args.check:
                 if not args.id in self.settings['all'].keys():
-                    color.display_messages('ID not registered',info=True)
-                    return
+                    return color.display_messages('ID not registered',info=True)
                 color.display_messages('Agents:', info=True, sublime=True)
                 agent = list(self.settings['all'][args.id])
                 self.listbotsprint += list([agent])
                 print tabulate(self.listbotsprint, headers=funcSQL.sqlite.headersCheck)
 
             elif args.check and args.id:
-                agent = self.settings['all'][args.id]
                 if not args.id in self.settings['all'].keys():
-                    color.display_messages('ID not registered', info=True)
-                    return
+                    return color.display_messages('ID not registered', info=True)
                 color.display_messages('Agents:', info=True, sublime=True)
                 agent = list(self.settings['all'][args.id])
                 agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
@@ -76,8 +72,7 @@ class Console(cmd.Cmd):
                 color.display_messages('Agents:', info=True, sublime=True)
                 for bots in self.settings['all'].items():self.listbotsprint += list([bots[1]])
                 print tabulate(self.listbotsprint, headers=funcSQL.sqlite.headers)
-                color.linefeed()
-                return
+                return color.linefeed()
 
             elif args.database and not args.id:
                 color.display_messages('Agents:', info=True, sublime=True)
@@ -103,8 +98,7 @@ class Console(cmd.Cmd):
         jobs = []
         for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
         if self.settings['all'] == {}:
-            color.display_messages('No Agents registered', info=True)
-            return
+            return color.display_messages('No Agents registered', info=True)
         if args.list:
             for agent in self.settings['agents'].keys():
                 if self.settings['agents'][int(agent)]['tunel'] != None:
@@ -129,6 +123,26 @@ class Console(cmd.Cmd):
         else:
             arg_parser.print_help()
 
+    def do_agents(self,args):
+        """ list all agents in interacting """
+        list_agents = []
+        # get all session activated
+        if self.settings['agents'].keys() != {}:
+            for agent in self.settings['agents'].keys():
+                if self.settings['agents'][agent]['tunel'] != None:
+                    if self.settings['agents'][agent]['tunel'].activated:
+                        list_agents.append([agent,self.settings['agents'][agent]['creds']['Host'],
+                self.settings['agents'][agent]['creds']['Port'],
+                    self.settings['agents'][agent]['tunel'].session.name,
+                        self.settings['agents'][agent]['tunel'].session.pid])
+            if list_agents != []:
+                color.display_messages('Session Agents:', info=True, sublime=True)
+                print tabulate(list_agents,headers=funcSQL.sqlite.headersAgents)
+                color.linefeed()
+                return color.display_messages('Online Agents: {}'.format(color.setcolor(str(len(list_agents)),
+                color='blue')), info=True)
+        color.display_messages('No agents in interacting', info=True)
+
     def do_interact(self,args):
         """ interact with one/all agents """
         arg_parser = argparse.ArgumentParser(prog='interact',description='interact with one/all agents')
@@ -139,42 +153,68 @@ class Console(cmd.Cmd):
         try:
             args=arg_parser.parse_args(shlex.split(args))
         except: return
-        if args.id:
-            color.display_messages('Checking Creadentials SHH...', info=True)
+        if args.id and not args.quit:
             self.search_on_agents()
             if args.id in self.settings['agents'].keys():
-                color.display_messages('connecting...', info=True)
+                if args.shell: return self.interactive_binbash(args.id) # call shell interactive /bin/bash
+                # connect client ssh
                 self.settings['agents'][args.id]['tunel'] = self.sshConnect.ssh(
                 self.settings['agents'][args.id]['creds']['Host'],
                 self.settings['agents'][args.id]['creds']['Port'],
                 self.settings['agents'][args.id]['creds']['User'],
                 self.settings['agents'][args.id]['creds']['Pass'])
-                color.display_messages('Agent::{} [{}]'.format(
+                return color.display_messages('Agent added:: {}:{} status::[{}]'.format(
                 self.settings['agents'][args.id]['creds']['Host'],
-                color.setcolor('ON', color='green')),info=True)
-                if args.shell:self.interactive_binbash(args.id)
+                self.settings['agents'][args.id]['creds']['Port'],
+                color.setcolor('Ok', color='green')),info=True)
+            color.display_messages('ID: could not be found', error=True)
+
+        elif args.id and args.quit:
+            # desconnect agents from ID
+            if args.id in self.settings['agents'].keys():
+                if self.settings['agents'][args.id]['tunel'] != None:
+                    if self.settings['agents'][args.id]['tunel'].activated:
+                        color.display_messages('HOST::{}:{} broken::[{}]'.format(
+                        self.settings['agents'][args.id]['creds']['Host'],
+                        self.settings['agents'][args.id]['creds']['Port'],
+                        color.setcolor('OFF', color='red')), info=True)
+                        return self.settings['agents'][args.id]['tunel'].logout()
+            color.display_messages('ID: could not be found', error=True)
 
         elif args.all:
-            color.display_messages('Checking Creadentials SHH...', info=True)
+            # connect all agents
             self.search_on_agents()
+            if self.settings['agents'].keys() == []:
+                return color.display_messages('No agents for kill sessions', error=True)
             for agent in self.settings['agents'].keys():
                 self.settings['agents'][agent]['tunel'] = self.sshConnect.ssh(
                 self.settings['agents'][agent]['creds']['Host'],
                 self.settings['agents'][agent]['creds']['Port'],
                 self.settings['agents'][agent]['creds']['User'],
                 self.settings['agents'][agent]['creds']['Pass'])
-                color.display_messages('Agent::{} [{}]\n'.format(
+                color.display_messages('Agent:: {}:{} status::[{}]'.format(
                 self.settings['agents'][agent]['creds']['Host'],
-                color.setcolor('ON', color='green')),info=True)
+                self.settings['agents'][agent]['creds']['Port'],
+                color.setcolor('Ok', color='green')),info=True)
 
         elif args.quit:
+            # kill all connection activated
+            listAgents = []
+            self.search_on_agents()
+            if self.settings['agents'].keys() == []:
+                return color.display_messages('No Agents registered', error=True)
             for agent in self.settings['agents'].keys():
                 if self.settings['agents'][int(agent)]['tunel'] != None:
-                    color.display_messages('HOST::{} broken::[{}]'.format(self.settings['agents'][agent]['creds']['Host'],
-                                                                          color.setcolor('OFF', color='red')), info=True)
+                    color.display_messages('HOST::{}:{} broken::[{}]'.format(
+                    self.settings['agents'][agent]['creds']['Host'],
+                    self.settings['agents'][agent]['creds']['Port'],
+                    color.setcolor('OFF', color='red')), info=True)
                     self.settings['agents'][int(agent)]['tunel'].logout()
-            self.search_on_agents()
-            color.display_messages('Connection broken all agents', info=True)
+                    listAgents.append(agent)
+            if listAgents != []:
+                return color.display_messages('Connection broken all agents', info=True)
+            color.display_messages('No agents for kill session', error=True)
+
         else:
             arg_parser.print_help()
 
@@ -228,7 +268,7 @@ class Console(cmd.Cmd):
 
     def search_on_agents(self):
         for agent in self.db.execute(funcSQL.sqlite.selectAllBots):
-            if  (self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).on):
+            if not agent[0] in self.settings['agents'].keys():
                 self.settings['agents'][agent[0]] = {'creds':{},'tunel':None}
                 self.settings['agents'][agent[0]]['creds']['ID']   = agent[0]
                 self.settings['agents'][agent[0]]['creds']['Host'] = agent[1]
@@ -341,7 +381,7 @@ class Console(cmd.Cmd):
         self.stdout.write('    {}	 {}\n'.format('--------', '-----------'))
         for command,doc in cmds_doc:
             self.stdout.write('    {:<10}	{}\n'.format(command, doc))
-        print('\n')
+        color.linefeed()
 
     def do_clear(self,args):
         """ clean up the line """
@@ -354,6 +394,7 @@ class Console(cmd.Cmd):
 
     def default(self, args):pass
     def emptyline(self):pass
+
     def do_exit(self, args):
         """ exit the program."""
         print "Quitting."
