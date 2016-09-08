@@ -111,11 +111,13 @@ class Console(cmd.Cmd):
                 print tabulate(jobs, headers=funcSQL.sqlite.headersJobs)
                 return
             color.display_messages('not command jobs activated', info=True)
+
         elif args.id and args.kill:
-            if self.settings['agents'][args.id]['tunel'] != None:
-                self.settings['agents'][args.id]['tunel'].job_stop()
-            else:
-                color.display_messages('Job:: From Id {} not found'.format(args.id), info=True)
+            if args.id in self.settings['agents'].keys():
+                if self.settings['agents'][args.id]['tunel'] != None:
+                    return self.settings['agents'][args.id]['tunel'].job_stop()
+            color.display_messages('Job:: From Id {} not found'.format(args.id), info=True)
+
         elif args.kill:
             for agent in self.settings['agents'].keys():
                 if self.settings['agents'][int(agent)]['tunel'] != None:
@@ -229,12 +231,18 @@ class Console(cmd.Cmd):
         if args.cmd and not args.jobs:
             for agent in self.settings['agents'].keys():
                 if self.settings['agents'][int(agent)]['tunel']:
-                    color.display_messages('HOST::{}'.format(self.settings['agents']
-                    [agent]['creds']['Host']), info=True, sublime=True)
-                    self.stdout.write(self.settings['agents'][int(agent)]['tunel'].send_command(args.cmd))
+                    if not self.settings['agents'][int(agent)]['tunel'].jobs['Running']:
+                        if self.settings['agents'][agent]['tunel'].activated:
+                            color.display_messages('HOST::{}'.format(self.settings['agents']
+                            [agent]['creds']['Host']), info=True, sublime=True)
+                            self.stdout.write(self.settings['agents'][agent]['tunel'].send_command(args.cmd))
+                    else:
+                        color.display_messages('Status: Unable to process request,'
+                        ' agent:: [{}] is busy in Jobs'.format(
+                        self.settings['agents'][agent]['creds']['Host']),error=True)
         elif args.cmd and args.jobs:
             for agent in self.settings['agents'].keys():
-                if self.settings['agents'][int(agent)]['tunel']:
+                if self.settings['agents'][int(agent)]['tunel'].activated:
                     self.settings['agents'][int(agent)]['tunel'].job_start(args.cmd)
         else:
             arg_parser.print_help()

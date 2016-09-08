@@ -48,6 +48,7 @@ class ssh(object):
         self.thread_jobs.stop(self.settings['Host'])
         self.jobs['Running'] = False
         self.activated = False
+        self.logout()
 
     def ThreadSSH(self):
         try:

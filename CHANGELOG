@@ -4,6 +4,7 @@ Version 1.3.2
 - added tabulate in imports clients
 - fixed somes improves in command "interact"
 - added command "agents" for list all agents in session
+- added lock session when execute command as job
 
 Version 1.3.1
 =============
