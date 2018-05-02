@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-setup(name='botdr4g0n',
+setup(name='b1tifi',
     version='1.3.2',
     description='SSH BOT management for distributed attacks',
     classifiers=[
@@ -8,7 +8,7 @@ setup(name='botdr4g0n',
         'Programming Language :: Python :: 2.7',
     ],
     keywords='ssh botssh botnet management',
-    url='http://github.com/mh4x0f/botdr4g0n',
+    url='http://github.com/mh4x0f/bitifi',
     author='Marcos Nesster @mh4x0f',
     author_email='mh4root@gmail.com',
     license='MIT',
@@ -21,7 +21,7 @@ setup(name='botdr4g0n',
         'pysqlite',
       ],
     entry_points = {
-        'console_scripts': ['botdr4g0n=shell.botdr4g0n:main',],
+        'console_scripts': ['b1tifi=shell.b1tifi:main',],
     },
     include_package_data=True,
     zip_safe=False)

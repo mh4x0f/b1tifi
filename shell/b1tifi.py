@@ -5,8 +5,8 @@ from shell.core.utils.color import banner
 version = '1.3.2'
 author  = 'Marcos Nesster (@mh4x0f)'
 def main():
-    folderDB = path.expanduser('~/.botdr4g0n-db')
-    db_path = path.join(folderDB, 'botdr4g0n.db')
+    folderDB = path.expanduser('~/.b1tifi-db')
+    db_path = path.join(folderDB, 'b1tifi.db')
     if not path.exists(folderDB):
         mkdir(folderDB)
     shell = Console(db_path)

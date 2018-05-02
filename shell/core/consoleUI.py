@@ -1,5 +1,5 @@
 #The MIT License (MIT)
-#Copyright (c) 2014-2016 Marcos Nesster (mh4x0f)
+#Copyright (c) 2014-2018 Marcos Nesster (mh4x0f)
 #Permission is hereby granted, free of charge, to any person obtaining a copy of
 #this software and associated documentation files (the "Software"), to deal in
 #the Software without restriction, including without limitation the rights to
@@ -14,6 +14,7 @@
 #COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 #IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 #CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 import argparse
 import cmd
 import shlex
@@ -24,10 +25,11 @@ from re import search
 from tabulate import tabulate
 import shell.core.libs.secureSSH as SSHConnection
 from shell.core.utils import color,funcSQL
+
 class Console(cmd.Cmd):
     def __init__(self,db_path):
         cmd.Cmd.__init__(self)
-        self.prompt = color.setcolor(':: ', color='Blue')
+        self.prompt = color.setcolor('b1tifi:: ', color='Blue')
         self.con    = sqlite3.connect(db_path)
         self.db     = self.con.cursor()
         self.db.execute(funcSQL.sqlite.createTables)

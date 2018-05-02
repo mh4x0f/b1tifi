@@ -34,13 +34,16 @@ def display_messages(string,error=False,sucess=False,info=False,sublime=False,wi
         elif info: print  '{}{}[*]{} {}'.format(colors.BLUE,colors.BOLD,colors.ENDC,string)
 
 def banner(v,a):
-    ASCII = ("""
-  _           _      _      _  _          ___
- | |__   ___ | |_ __| |_ __| || |   __ _ / _ \ _ __
- | '_ \ / _ \| __/ _` | '__| || |_ / _` | | | | '_ |
- | |_) | (_) | || (_| | |  |__   _| (_| | |_| | | | |
- |_.__/ \___/ \__\__,_|_|     |_|  \__, |\___/|_| |_|
-                                   |___/
+    ASCII = ("""           
+  ___   _          _
+ / _ \ / |        | |
+| |_) )- |___ _  _| |_  _
+|  _ < | (   ) |/     \| |
+| |_) )| || || ( (| |) ) |
+|  __/ |_| \_)\_)_   _/ \_)
+| |               | |
+|_|               |_|
+
     Version: {}
     Author:  {}\n""".format(v,a))
     return ASCII
