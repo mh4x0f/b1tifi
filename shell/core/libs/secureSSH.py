@@ -20,6 +20,7 @@ import time
 from socket import gethostbyname
 from datetime import datetime
 from pexpect import pxssh
+from os import path
 from shell.core.utils.threads import Thread_Jobs
 from shell.core.utils.color import setcolor,display_messages
 
@@ -52,9 +53,14 @@ class ssh(object):
 
     def ThreadSSH(self):
         try:
-            self.session = pxssh.pxssh()
-            self.session.login(gethostbyname(self.settings['Host']), self.settings['User'],
-            self.settings['Password'],port=self.settings['Port'])
+            self.session = pxssh.pxssh(encoding='utf-8')
+            if (not path.isfile(self.settings['Password'])):
+                self.session.login(gethostbyname(self.settings['Host']), self.settings['User'],
+                self.settings['Password'],port=self.settings['Port'])
+            else:
+                self.session.login(gethostbyname(self.settings['Host']), self.settings['User'],
+                ssh_key=self.settings['Password'],port=self.settings['Port'])
+
             if self.connection:
                 self.status = '[{}]'.format(setcolor('ON',color='green'))
             self.activated = True

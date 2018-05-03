@@ -24,7 +24,8 @@ from subprocess import check_output
 from re import search
 from tabulate import tabulate
 import shell.core.libs.secureSSH as SSHConnection
-from shell.core.utils import color,funcSQL
+from shell.core.utils import color
+import shell.core.utils.constants as C
 
 class Console(cmd.Cmd):
     def __init__(self,db_path):
@@ -32,7 +33,7 @@ class Console(cmd.Cmd):
         self.prompt = color.setcolor('b1tifi:: ', color='Blue')
         self.con    = sqlite3.connect(db_path)
         self.db     = self.con.cursor()
-        self.db.execute(funcSQL.sqlite.createTables)
+        self.db.execute(C.createTables)
         self.settings   = {'all' :{},'check' :[],'agents':{}}
         self.sshConnect = SSHConnection
         self.search_all_agents()
@@ -48,7 +49,7 @@ class Console(cmd.Cmd):
         except: return
         self.settings['all'] = {}
         self.listbotsprint = []
-        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
+        for agent in self.db.execute(C.selectAllBots):self.settings['all'][agent[0]] = agent
         if self.settings['all'] == {}:
             return color.display_messages('No Agents registered',info=True)
         if args.database:
@@ -58,7 +59,7 @@ class Console(cmd.Cmd):
                 color.display_messages('Agents:', info=True, sublime=True)
                 agent = list(self.settings['all'][args.id])
                 self.listbotsprint += list([agent])
-                print tabulate(self.listbotsprint, headers=funcSQL.sqlite.headersCheck)
+                print tabulate(self.listbotsprint, headers=C.headersCheck)
 
             elif args.check and args.id:
                 if not args.id in self.settings['all'].keys():
@@ -67,13 +68,13 @@ class Console(cmd.Cmd):
                 agent = list(self.settings['all'][args.id])
                 agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
                 self.listbotsprint += list([agent])
-                print tabulate(self.listbotsprint, headers=funcSQL.sqlite.headersCheck)
+                print tabulate(self.listbotsprint, headers=C.headersCheck)
 
 
             elif args.database and not args.check:
                 color.display_messages('Agents:', info=True, sublime=True)
                 for bots in self.settings['all'].items():self.listbotsprint += list([bots[1]])
-                print tabulate(self.listbotsprint, headers=funcSQL.sqlite.headers)
+                print tabulate(self.listbotsprint, headers=C.headers)
                 return color.linefeed()
 
             elif args.database and not args.id:
@@ -82,7 +83,7 @@ class Console(cmd.Cmd):
                     agent = list(agent[1])
                     agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
                     self.listbotsprint += list([agent])
-                print tabulate(self.listbotsprint, headers=funcSQL.sqlite.headersCheck)
+                print tabulate(self.listbotsprint, headers=C.headersCheck)
                 color.linefeed()
         else:
             arg_parser.print_help()
@@ -98,7 +99,7 @@ class Console(cmd.Cmd):
         except: return
         self.settings['all'] = {}
         jobs = []
-        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
+        for agent in self.db.execute(C.selectAllBots):self.settings['all'][agent[0]] = agent
         if self.settings['all'] == {}:
             return color.display_messages('No Agents registered', info=True)
         if args.list:
@@ -110,7 +111,7 @@ class Console(cmd.Cmd):
                         listjobs.insert(0,int(agent))
                         jobs.append(listjobs)
             if jobs != []:
-                print tabulate(jobs, headers=funcSQL.sqlite.headersJobs)
+                print tabulate(jobs, headers=C.headersJobs)
                 return
             color.display_messages('not command jobs activated', info=True)
 
@@ -141,7 +142,7 @@ class Console(cmd.Cmd):
                         self.settings['agents'][agent]['tunel'].session.pid])
             if list_agents != []:
                 color.display_messages('Session Agents:', info=True, sublime=True)
-                print tabulate(list_agents,headers=funcSQL.sqlite.headersAgents)
+                print tabulate(list_agents,headers=C.headersAgents)
                 color.linefeed()
                 return color.display_messages('Online Agents: {}'.format(color.setcolor(str(len(list_agents)),
                 color='blue')), info=True)
@@ -262,22 +263,22 @@ class Console(cmd.Cmd):
         """ test all agents login ssh  """
         agentsCount = 0
         self.settings['check'] = []
-        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):
+        for agent in self.db.execute(C.selectAllBots):
             agent = list(agent)
             agent.insert(len(agent),self.sshConnect.ssh(agent[1],agent[2],agent[3],agent[4],checkconnect=True).status)
             self.settings['check'].append(agent)
         color.display_messages('Available Bots:', info=True, sublime=True)
-        print tabulate(self.settings['check'], headers=funcSQL.sqlite.headersCheck)
+        print tabulate(self.settings['check'], headers=C.headersCheck)
         for items in self.settings['check']:
             if search('ON',items[6]):agentsCount +=1
         color.linefeed()
         color.display_messages('Online Agents: {}'.format(color.setcolor(str(agentsCount), color='blue')), info=True)
 
     def search_all_agents(self):
-        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):self.settings['all'][agent[0]] = agent
+        for agent in self.db.execute(C.selectAllBots):self.settings['all'][agent[0]] = agent
 
     def search_on_agents(self):
-        for agent in self.db.execute(funcSQL.sqlite.selectAllBots):
+        for agent in self.db.execute(C.selectAllBots):
             if not agent[0] in self.settings['agents'].keys():
                 self.settings['agents'][agent[0]] = {'creds':{},'tunel':None}
                 self.settings['agents'][agent[0]]['creds']['ID']   = agent[0]
@@ -290,7 +291,7 @@ class Console(cmd.Cmd):
         """ add bot on database """
         arg_parser = argparse.ArgumentParser(prog='register',description='add bot on database clients')
         arg_parser.add_argument('--host', dest='host',metavar='<Host>', help='ipaddress/host/dns connect ssh')
-        arg_parser.add_argument('--pass', dest='password',metavar='<Password>', help='password ssh client')
+        arg_parser.add_argument('--pass', dest='password',metavar='<Password> <filepath>', help='password/ssh key ssh client')
         arg_parser.add_argument('-u', '--user',dest='user', metavar='<user>', help='delete all bot registered')
         arg_parser.add_argument('-p', '--port', dest='port',metavar='<Port>',default='22', help='port connect ssh')
         arg_parser.add_argument('-f', '--file', dest='file',metavar='<filepath>', help='imports clients from a file')
@@ -299,7 +300,7 @@ class Console(cmd.Cmd):
         except: return
         if args.host and args.password and args.user:
             color.display_messages('Insert Data: SQL statement will insert a new row', info=True)
-            funcSQL.DB_insert(self.con, self.db, args.host, args.port, args.user, args.password)
+            C.DB_insert(self.con, self.db, args.host, args.port, args.user, args.password)
             color.display_messages('credentials ssh added with success', sucess=True)
         elif args.file:
             self.all_bot_checked = []
@@ -314,21 +315,21 @@ class Console(cmd.Cmd):
                     print('You need to use the separator character [space] in this format below\n')
                     print('-----cut here -------\n')
                     print('root:~# cat example.txt\n')
-                    print('192.168.0.100 22 DemoBOT P@ssW0rd')
-                    print('192.168.0.120 22 Userdr4g0n botP@ssW0rd')
+                    print('192.168.0.100 22 DemoBOT P@ssW0rd or ssh_key file')
+                    print('192.168.0.120 22 b1tifi botP@ssW0rd ssh_key file')
                     print('\n-----cut here -------\n')
                     print('')
                     return None
                 self.ListBot = []
                 color.display_messages('All agents imported from file:', info=True,sublime=True)
                 for agent in self.all_bot_checked: self.ListBot += list([agent.split()])
-                print tabulate(self.ListBot, headers=funcSQL.sqlite.headersimport)
+                print tabulate(self.ListBot, headers=C.headersimport)
                 color.linefeed()
                 choise = raw_input('{}[*]{} Do you want to import?(S/N):'.format(color.colors.GREEN,color.colors.ENDC,))
                 if choise.lower() == 's':
                     color.display_messages('Importing agents...',info=True)
                     for agent  in self.all_bot_checked:
-                        funcSQL.DB_insert(self.con, self.db,
+                        C.DB_insert(self.con, self.db,
                             agent.split()[0],agent.split()[1],agent.split()[2],agent.split()[3])
                     return color.display_messages('all agents ssh added with success', sucess=True)
                 color.display_messages('import was been canceled.', error=True)
@@ -355,13 +356,13 @@ class Console(cmd.Cmd):
             color.display_messages('Search query for finding a particular id', info=True)
             color.display_messages('Section DELETE FROM statement.', info=True)
             color.display_messages('ID:{} Host:{} Port:{} User:{} Password:{})'.format(items[0], items[1], items[2], items[3], items[4]), info=True)
-            funcSQL.deleteID(self.con, self.db, args.id)
-            if funcSQL.lengthDB(self.db) < 1:
-                self.db.execute(funcSQL.sqlite.zeraids)
+            C.deleteID(self.con, self.db, args.id)
+            if C.lengthDB(self.db) < 1:
+                self.db.execute(C.zeraids)
                 self.con.commit()
         elif args.all:
-            self.db.execute(funcSQL.sqlite.delete_all)
-            self.db.execute(funcSQL.sqlite.createTables)
+            self.db.execute(C.delete_all)
+            self.db.execute(C.createTables)
             color.display_messages('All data has been removed.',info=True)
             self.con.commit()
         else:
