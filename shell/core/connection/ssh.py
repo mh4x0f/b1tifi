@@ -21,8 +21,8 @@ from socket import gethostbyname
 from datetime import datetime
 from pexpect import pxssh
 from os import path
-from shell.core.utils.threads import Thread_Jobs
-from shell.core.utils.color import setcolor,display_messages
+from shell.core.utility.threads import Thread_Jobs
+from shell.core.utility.color import setcolor,display_messages
 
 class ssh(object):
     def __init__(self, host,port, user, password,checkconnect=True):

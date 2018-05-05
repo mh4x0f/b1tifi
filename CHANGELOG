@@ -6,6 +6,7 @@ Version 1.3.2
 - added command "agents" for list all agents in session
 - added lock session when execute command as job
 - added option ssh key Authentication #3
+- added changed file struct for add modules OS #4
 
 Version 1.3.1
 =============

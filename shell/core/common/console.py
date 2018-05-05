@@ -18,24 +18,21 @@
 import argparse
 import cmd
 import shlex
-import sqlite3
 from os import system,path,getcwd
 from subprocess import check_output
 from re import search
 from tabulate import tabulate
-import shell.core.libs.secureSSH as SSHConnection
-from shell.core.utils import color
-import shell.core.utils.constants as C
+from shell.core.utility import color
+import shell.core.utility.constants as C
 
-class Console(cmd.Cmd):
-    def __init__(self,db_path):
+class ConsoleUI(cmd.Cmd):
+    def __init__(self,settings,ssh_session=None, dcon=dict):
         cmd.Cmd.__init__(self)
         self.prompt = color.setcolor('b1tifi:: ', color='Blue')
-        self.con    = sqlite3.connect(db_path)
-        self.db     = self.con.cursor()
-        self.db.execute(C.createTables)
-        self.settings   = {'all' :{},'check' :[],'agents':{}}
-        self.sshConnect = SSHConnection
+        self.settings   = settings
+        self.db         = dcon['db_cursor']
+        self.con        = dcon['db_con']
+        self.sshConnect = ssh_session
         self.search_all_agents()
 
     def do_list(self,args):
