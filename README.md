@@ -3,8 +3,7 @@ B1tifi
 [![build](https://travis-ci.org/mh4x0f/b1tifi.svg)](https://travis-ci.org/mh4x0f/b1tifi/)
 
 ### Description
-The B1tifi is a security tool for DDOS attack on SSH BOT management for distributed attacks.
-
+The B1tifi is a ssh management tool to provides commandline access to a remote system running SSH server.
 
 ### Installation
 - python 2.7

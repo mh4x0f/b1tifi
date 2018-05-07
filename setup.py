@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(name='b1tifi',
     version='1.3.2',
-    description='SSH BOT management for distributed attacks',
+    description='ssh management tool to provides commandline access to a remote system running SSH server',
     classifiers=[
         'License :: MIT License',
         'Programming Language :: Python :: 2.7',
